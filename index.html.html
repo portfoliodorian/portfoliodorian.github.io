@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dorian Dupont-Charfe — IT & Cybersécurité</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f3ef;
+    --ink: #0e0e0e;
+    --muted: #6b6b6b;
+    --accent: #e94560;
+    --border: #d4d0c8;
+    --mono: 'DM Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* CURSOR */
+  body { cursor: none; }
+  #cursor {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+  }
+  #cursor-ring {
+    width: 32px; height: 32px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+    opacity: 0.5;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    mix-blend-mode: multiply;
+  }
+  .nav-logo {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 80px;
+  }
+  .hero-tag {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  h1 {
+    font-family: var(--sans);
+    font-size: clamp(48px, 6vw, 88px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -3px;
+    color: var(--ink);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+  h1 span { color: var(--accent); }
+  .hero-sub {
+    margin-top: 32px;
+    max-width: 400px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+  .hero-cta {
+    margin-top: 48px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 14px 28px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--accent); transform: translateY(-2px); }
+  .btn-link {
+    color: var(--muted);
+    font-size: 12px;
+    text-decoration: none;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .btn-link:hover { color: var(--ink); border-color: var(--ink); }
+
+  .hero-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    opacity: 0;
+    animation: fadeIn 1.2s 0.5s forwards;
+  }
+  .hero-card {
+    width: 320px;
+    border: 1px solid var(--border);
+    padding: 40px;
+    position: relative;
+    background: white;
+  }
+  .hero-card::before {
+    content: '';
+    position: absolute;
+    top: 8px; left: 8px;
+    right: -8px; bottom: -8px;
+    border: 1px solid var(--border);
+    z-index: -1;
+  }
+  .status-dot {
+    width: 8px; height: 8px;
+    background: #22c55e;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    animation: pulse 2s infinite;
+  }
+  .status-text { font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+  .card-name {
+    font-family: var(--sans);
+    font-size: 22px;
+    font-weight: 700;
+    margin-top: 20px;
+    letter-spacing: -0.5px;
+  }
+  .card-title {
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .card-divider {
+    width: 40px; height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+  }
+  .card-info { display: flex; flex-direction: column; gap: 8px; }
+  .card-info-item { font-size: 12px; color: var(--muted); }
+  .card-info-item strong { color: var(--ink); }
+
+  /* BIG NUMBER */
+  .hero-number {
+    position: absolute;
+    bottom: -20px; right: 40px;
+    font-family: var(--sans);
+    font-size: 180px;
+    font-weight: 800;
+    color: var(--border);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0;
+    animation: fadeIn 1.5s 1s forwards;
+  }
+
+  /* SECTIONS */
+  section { padding: 120px 48px; }
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: var(--sans);
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 60px;
+  }
+
+  /* XP */
+  #experience { border-top: 1px solid var(--border); }
+  .xp-list { display: flex; flex-direction: column; }
+  .xp-item {
+    display: grid;
+    grid-template-columns: 180px 1fr auto;
+    gap: 40px;
+    padding: 36px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .xp-item.visible { opacity: 1; transform: none; }
+  .xp-date { font-size: 12px; color: var(--muted); padding-top: 4px; }
+  .xp-company {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .xp-role {
+    font-family: var(--sans);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+  }
+  .xp-desc { font-size: 13px; color: var(--muted); max-width: 500px; line-height: 1.8; }
+  .xp-tags { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+  .tag {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* SKILLS */
+  #skills { background: var(--ink); color: var(--bg); border-top: none; }
+  #skills .section-title { color: var(--bg); }
+  #skills .section-label { color: var(--accent); }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: #222;
+    border: 1px solid #222;
+    margin-top: 60px;
+  }
+  .skill-block {
+    background: var(--ink);
+    padding: 36px 32px;
+    transition: background 0.2s;
+  }
+  .skill-block:hover { background: #161616; }
+  .skill-block-title {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .skill-items { display: flex; flex-direction: column; gap: 12px; }
+  .skill-item { display: flex; align-items: center; justify-content: space-between; }
+  .skill-name { font-size: 13px; color: #ccc; }
+  .skill-bar-wrap { width: 80px; height: 2px; background: #333; }
+  .skill-bar { height: 100%; background: var(--accent); transition: width 1s ease; }
+
+  /* FORMATION */
+  #formation { border-top: 1px solid var(--border); }
+  .formation-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .formation-item {
+    background: var(--bg);
+    padding: 36px 32px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+  .formation-item.visible { opacity: 1; transform: none; }
+  .formation-date { font-size: 11px; color: var(--accent); letter-spacing: 1px; margin-bottom: 10px; }
+  .formation-name {
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 6px;
+  }
+  .formation-place { font-size: 12px; color: var(--muted); }
+
+  /* CONTACT */
+  #contact { border-top: 1px solid var(--border); }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .contact-big {
+    font-family: var(--sans);
+    font-size: clamp(40px, 5vw, 72px);
+    font-weight: 800;
+    letter-spacing: -3px;
+    line-height: 1;
+  }
+  .contact-big span { color: var(--accent); }
+  .contact-info { display: flex; flex-direction: column; gap: 24px; margin-top: 8px; }
+  .contact-row { display: flex; flex-direction: column; gap: 4px; }
+  .contact-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+  .contact-value { font-size: 14px; color: var(--ink); }
+  .contact-value a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--border); transition: border-color 0.2s, color 0.2s; }
+  .contact-value a:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* PROJECTS */
+  #projects { border-top: 1px solid var(--border); }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .project-card {
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .project-card.visible { opacity: 1; transform: none; }
+  .project-card:hover .project-overlay { opacity: 1; }
+  .project-card:hover .project-img-placeholder { transform: scale(1.04); }
+
+  .project-img-placeholder {
+    width: 100%;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.5s ease;
+  }
+  .project-card:nth-child(1) .project-img-placeholder { background: #0e0e0e; }
+  .project-card:nth-child(2) .project-img-placeholder { background: #1a1a2e; }
+
+  .placeholder-pattern {
+    position: absolute; inset: 0;
+    opacity: 0.12;
+  }
+  .placeholder-label {
+    font-family: var(--sans);
+    font-size: 64px;
+    font-weight: 800;
+    letter-spacing: -3px;
+    color: rgba(255,255,255,0.08);
+    user-select: none;
+    position: relative;
+    z-index: 1;
+  }
+  .img-badge {
+    position: absolute;
+    top: 20px; right: 20px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: white;
+    padding: 5px 10px;
+    z-index: 2;
+  }
+
+  .project-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(233, 69, 96, 0.06);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  .project-body { padding: 32px; }
+  .project-number {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .project-title {
+    font-family: var(--sans);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+    line-height: 1.1;
+  }
+  .project-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 24px;
+  }
+  .project-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .project-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .project-tag {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    color: var(--muted);
+  }
+  .project-year {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .project-add-img {
+    margin: 0 32px 32px;
+    border: 1px dashed var(--border);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .add-icon {
+    width: 32px; height: 32px;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    color: var(--muted);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    #hero { grid-template-columns: 1fr; padding: 100px 24px 60px; }
+    .hero-right { display: none; }
+    section { padding: 80px 24px; }
+    .xp-item { grid-template-columns: 1fr; gap: 12px; }
+    .xp-tags { align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .formation-grid { grid-template-columns: 1fr; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+    footer { flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">DDC</a>
+  <ul class="nav-links">
+    <li><a href="#experience">Expérience</a></li>
+    <li><a href="#projects">Projets</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#formation">Formation</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <p class="hero-tag">Disponible — Sept. 2026</p>
+    <h1>Dorian<br>Dupont<span>-</span><br>Charfe</h1>
+    <p class="hero-sub">Alternant IT & Réseaux. BTS CIEL en cours, bientôt L3 Informatique, Réseaux et Cybersécurité. Je construis des systèmes fiables et j'apprends vite.</p>
+    <div class="hero-cta">
+      <a href="mailto:dupontcharfe.d@gmail.com" class="btn-primary">Me contacter</a>
+      <a href="#experience" class="btn-link">Voir mon parcours</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-card">
+      <div>
+        <span class="status-dot"></span>
+        <span class="status-text">Open to work</span>
+      </div>
+      <div class="card-name">Dorian D-C.</div>
+      <div class="card-title">IT · Réseaux · Cybersécurité</div>
+      <div class="card-divider"></div>
+      <div class="card-info">
+        <div class="card-info-item"><strong>Localisation</strong> — Île-de-France</div>
+        <div class="card-info-item"><strong>Dispo</strong> — 1er sept. 2026</div>
+        <div class="card-info-item"><strong>Type</strong> — Alternance (L3)</div>
+        <div class="card-info-item"><strong>Permis</strong> — B + Drone</div>
+      </div>
+    </div>
+    <div class="hero-number">IT</div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <p class="section-label">02 — Expérience</p>
+  <h2 class="section-title">Terrain.</h2>
+  <div class="xp-list">
+
+    <div class="xp-item">
+      <div class="xp-date">Sept. 2024<br>→ Août 2026</div>
+      <div>
+        <div class="xp-company">Prescom — Montigny-le-Bretonneux</div>
+        <div class="xp-role">Technicien informatique</div>
+        <p class="xp-desc">Support utilisateurs, déploiement postes et périphériques, maintenance réseau, administration Active Directory, gestion de parc et inventaire.</p>
+      </div>
+      <div class="xp-tags">
+        <span class="tag">Active Directory</span>
+        <span class="tag">Réseau</span>
+        <span class="tag">Support</span>
+      </div>
+    </div>
+
+    <div class="xp-item">
+      <div class="xp-date">Mars 2024<br>→ Juin 2024</div>
+      <div>
+        <div class="xp-company">Lycée Jean Jaurès — Châtenay-Malabry</div>
+        <div class="xp-role">Développement Android</div>
+        <p class="xp-desc">Conception et développement d'une application Android en Java sur Android Studio. Projet mené en autonomie complète.</p>
+      </div>
+      <div class="xp-tags">
+        <span class="tag">Java</span>
+        <span class="tag">Android Studio</span>
+      </div>
+    </div>
+
+    <div class="xp-item">
+      <div class="xp-date">Déc. 2022<br>→ Juin 2023</div>
+      <div>
+        <div class="xp-company">Dassault Systèmes — Vélizy-Villacoublay</div>
+        <div class="xp-role">Projet réalité augmentée</div>
+        <p class="xp-desc">Mise en place d'une application web de réalité augmentée en JavaScript sur VS Code. Projet mené en équipe dans un environnement professionnel exigeant.</p>
+      </div>
+      <div class="xp-tags">
+        <span class="tag">JavaScript</span>
+        <span class="tag">Web AR</span>
+        <span class="tag">Équipe</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <p class="section-label">03 — Compétences</p>
+  <h2 class="section-title">Stack.</h2>
+  <div class="skills-grid">
+
+    <div class="skill-block">
+      <div class="skill-block-title">Réseaux & Systèmes</div>
+      <div class="skill-items">
+        <div class="skill-item">
+          <span class="skill-name">Adressage IPv4</span>
+          <div class="skill-bar-wrap"><div class="skill-bar" style="width:85%"></div></div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Active Directory</span>
+          <div class="skill-bar-wrap"><div class="skill-bar" style="width:80%"></div></div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Cisco Packet Tracer</span>
+          <div class="skill-bar-wrap"><div class="skill-bar" style="width:75%"></div></div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Virtualisation</span>
+          <div class="skill-bar-wrap"><div class="skill-bar" style="width:70%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-block">
+      <div class="skill-block-title">Développement</div>
+      <div class="skill-items">
+        <div class="skill-item">
+          <span class="skill-name">Java / Android</span>
+          <div class="skill-bar-wrap"><div class="skill-bar" style="width:75%"></div></div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">JavaScript</span>
+          <div class="skill-bar-wrap"><div class="skill-bar" style="width:70%"></div></div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">C / C++</span>
+          <div class="skill-bar-wrap"><div class="skill-bar" style="width:65%"></div></div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Détection d'objet (IA)</span>
+          <div class="skill-bar-wrap"><div class="skill-bar" style="width:60%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill-block">
+      <div class="skill-block-title">Outils & Autres</div>
+      <div class="skill-items">
+        <div class="skill-item">
+          <span class="skill-name">Arduino</span>
+          <div class="skill-bar-wrap"><div class="skill-bar" style="width:70%"></div></div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Solidworks</span>
+          <div class="skill-bar-wrap"><div class="skill-bar" style="width:60%"></div></div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Suite Office</span>
+          <div class="skill-bar-wrap"><div class="skill-bar" style="width:85%"></div></div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Anglais B2</span>
+          <div class="skill-bar-wrap"><div class="skill-bar" style="width:78%"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <p class="section-label">04 — Projets</p>
+  <h2 class="section-title">Réalisations.</h2>
+  <div class="projects-grid">
+
+    <!-- PROJET 1 : AR DASSAULT -->
+    <div class="project-card">
+      <div class="project-img-placeholder">
+        <svg class="placeholder-pattern" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+          <defs><pattern id="grid1" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0L0 0 0 40" fill="none" stroke="white" stroke-width="0.5"/></pattern></defs>
+          <rect width="400" height="280" fill="url(#grid1)"/>
+          <circle cx="200" cy="140" r="60" fill="none" stroke="white" stroke-width="0.8"/>
+          <circle cx="200" cy="140" r="30" fill="none" stroke="#e94560" stroke-width="1"/>
+          <line x1="200" y1="80" x2="200" y2="200" stroke="white" stroke-width="0.5"/>
+          <line x1="140" y1="140" x2="260" y2="140" stroke="white" stroke-width="0.5"/>
+        </svg>
+        <div class="placeholder-label">AR</div>
+        <div class="img-badge">2022 — 2023</div>
+      </div>
+      <div class="project-overlay"></div>
+      <div class="project-body">
+        <div class="project-number">Projet 01</div>
+        <div class="project-title">Réalité Augmentée<br>Dassault Systèmes</div>
+        <p class="project-desc">Développement d'une application web de réalité augmentée dans le cadre d'un projet professionnel chez Dassault Systèmes. Création d'une interface interactive en JavaScript permettant de superposer des éléments 3D sur un environnement réel via le navigateur.</p>
+        <div class="project-meta">
+          <div class="project-tags">
+            <span class="project-tag">JavaScript</span>
+            <span class="project-tag">Web AR</span>
+            <span class="project-tag">VS Code</span>
+            <span class="project-tag">Équipe</span>
+          </div>
+          <span class="project-year">2022 – 23</span>
+        </div>
+      </div>
+      <div class="project-add-img">
+        <div class="add-icon">+</div>
+        <span>Remplace ce bloc par tes captures d'écran du projet</span>
+      </div>
+    </div>
+
+    <!-- PROJET 2 : APP ANDROID -->
+    <div class="project-card">
+      <div class="project-img-placeholder">
+        <svg class="placeholder-pattern" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+          <defs><pattern id="dots1" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="white"/></pattern></defs>
+          <rect width="400" height="280" fill="url(#dots1)"/>
+          <rect x="155" y="60" width="90" height="160" rx="12" fill="none" stroke="white" stroke-width="1"/>
+          <rect x="165" y="80" width="70" height="110" rx="4" fill="none" stroke="#e94560" stroke-width="0.8"/>
+          <circle cx="200" cy="210" r="6" fill="none" stroke="white" stroke-width="1"/>
+        </svg>
+        <div class="placeholder-label">APP</div>
+        <div class="img-badge">2024</div>
+      </div>
+      <div class="project-overlay"></div>
+      <div class="project-body">
+        <div class="project-number">Projet 02</div>
+        <div class="project-title">Application Android<br>Java</div>
+        <p class="project-desc">Conception et développement complet d'une application mobile Android en Java sur Android Studio. Projet mené en totale autonomie, de l'architecture à la mise en production, à travers de la recherche et des ressources techniques.</p>
+        <div class="project-meta">
+          <div class="project-tags">
+            <span class="project-tag">Java</span>
+            <span class="project-tag">Android Studio</span>
+            <span class="project-tag">Autonomie</span>
+          </div>
+          <span class="project-year">2024</span>
+        </div>
+      </div>
+      <div class="project-add-img">
+        <div class="add-icon">+</div>
+        <span>Remplace ce bloc par tes captures d'écran du projet</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FORMATION -->
+<section id="formation">
+  <p class="section-label">05 — Formation</p>
+  <h2 class="section-title">Parcours.</h2>
+  <div class="formation-grid">
+
+    <div class="formation-item">
+      <div class="formation-date">2024 → 2026</div>
+      <div class="formation-name">BTS CIEL — Informatique & Réseaux</div>
+      <div class="formation-place">AFORP, Cachan (94) — En cours</div>
+    </div>
+
+    <div class="formation-item">
+      <div class="formation-date">2026 → 2027</div>
+      <div class="formation-name">L3 Informatique, Réseaux & Cybersécurité</div>
+      <div class="formation-place">À venir — alternance</div>
+    </div>
+
+    <div class="formation-item">
+      <div class="formation-date">Juillet 2024</div>
+      <div class="formation-name">Baccalauréat STI2D</div>
+      <div class="formation-place">Lycée Jean Jaurès, Châtenay-Malabry (92)</div>
+    </div>
+
+    <div class="formation-item">
+      <div class="formation-date">2021 → 2024</div>
+      <div class="formation-name">Brevet Jeunes Sapeurs-Pompiers</div>
+      <div class="formation-place">BSPP Vincennes — + SSIAP, SST, PSE2</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <p class="section-label">06 — Contact</p>
+  <div class="contact-grid">
+    <div>
+      <div class="contact-big">On<br>bosse<br>ensemble<span>?</span></div>
+    </div>
+    <div class="contact-info">
+      <div class="contact-row">
+        <span class="contact-label">Email</span>
+        <span class="contact-value"><a href="mailto:dupontcharfe.d@gmail.com">dupontcharfe.d@gmail.com</a></span>
+      </div>
+      <div class="contact-row">
+        <span class="contact-label">Téléphone</span>
+        <span class="contact-value"><a href="tel:+33767149650">07 67 14 96 50</a></span>
+      </div>
+      <div class="contact-row">
+        <span class="contact-label">Localisation</span>
+        <span class="contact-value">Fontenay-aux-Roses — Île-de-France</span>
+      </div>
+      <div class="contact-row">
+        <span class="contact-label">Disponibilité</span>
+        <span class="contact-value">1er septembre 2026 — Alternance L3</span>
+      </div>
+      <div class="contact-row">
+        <span class="contact-label">Références</span>
+        <span class="contact-value">Adrien Le-Roux (Prescom) · Fivos Doganis (Dassault)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 Dorian Dupont-Charfe</span>
+  <span>IT · Réseaux · Cybersécurité</span>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx + 'px'; cursor.style.top = my + 'px'; });
+  function animRing() { rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(animRing); }
+  animRing();
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => { ring.style.transform = 'translate(-50%,-50%) scale(2)'; ring.style.opacity = '0.3'; });
+    el.addEventListener('mouseleave', () => { ring.style.transform = 'translate(-50%,-50%) scale(1)'; ring.style.opacity = '0.5'; });
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.xp-item, .formation-item, .project-card').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
